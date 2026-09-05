@@ -30,6 +30,10 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml down             
 
 The app runs at `localhost:8000` by default. Instance **b** is on `8001` (db `5433`, redis `6380`, …); see `./scripts/dev-instances`.
 
+## Agent Skill Copies
+
+The common skills under `.cursor/skills/`, `.claude/skills/`, and `.agents/skills/` are tracked copies of upstream-authored Laravel/Spatie guidance; this repository has no generator for them. `skills-lock.json` currently locks only the shadcn bundle. Keep common skill mirrors byte-identical, and use `composer.lock` plus checked-in application source as the API authority when examples need correction. Do not add a parallel skill registry or rename these user-facing skill directories.
+
 ## Testing the Self-Hosted Upgrade Process
 
 Use the following workflow to test a self-hosted upgrade:
@@ -127,7 +131,7 @@ Because the "server" and the test share one PHP process, they share the phpunit 
 
 ### Backend Structure (app/)
 - **Actions/** — Domain actions organized by area (Application, Database, Docker, Proxy, Server, Service, Shared, Stripe, User, CoolifyTask, Fortify). Uses `lorisleiva/laravel-actions` with `AsAction` trait — actions can be called as objects, dispatched as jobs, or used as controllers.
-- **Livewire/** — All UI components (Livewire 3). Pages organized by domain: Server, Project, Settings, Security, Notifications, Terminal, Subscription, SharedVariables. This is the primary UI layer — no traditional Blade controllers. Components listen to private team channels for real-time status updates via Soketi.
+- **Livewire/** — All UI components (Livewire 3). Pages organized by domain: Server, Project, Settings, Security, Notifications, Terminal, Subscription, SharedVariables. This is the primary UI layer; retained traditional controllers still serve auth, previews, OAuth, and other non-Livewire routes. Components listen to private team channels for real-time status updates via Soketi.
 - **Jobs/** — Queue jobs for deployments (`ApplicationDeploymentJob`), backups, Docker cleanup, server management, proxy configuration. Uses Redis queue with Horizon for monitoring.
 - **Models/** — Eloquent models extending `BaseModel` which provides auto-CUID2 UUID generation. Key models: `Server`, `Application`, `Service`, `Project`, `Environment`, `Team`, plus standalone database models (`StandalonePostgresql`, `StandaloneMysql`, etc.). Common traits: `HasConfiguration`, `HasMetrics`, `HasSafeStringAttribute`, `ClearsGlobalSearchCache`.
 - **Services/** — Business logic services (ConfigurationGenerator, DockerImageParser, ContainerStatusAggregator, HetznerService, etc.). Use Services for complex orchestration; use Actions for single-purpose domain operations.

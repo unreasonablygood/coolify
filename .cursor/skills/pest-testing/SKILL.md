@@ -1,6 +1,6 @@
 ---
 name: pest-testing
-description: "Use this skill for Pest PHP testing in Laravel projects only. Trigger whenever any test is being written, edited, fixed, or refactored — including fixing tests that broke after a code change, adding assertions, converting PHPUnit to Pest, adding datasets, and TDD workflows. Always activate when the user asks how to write something in Pest, mentions test files or directories (tests/Feature, tests/Unit, tests/Browser), or needs browser testing, smoke testing multiple pages for JS errors, or architecture tests. Covers: test()/it()/expect() syntax, datasets, mocking, browser testing (visit/click/fill), smoke testing, arch(), Livewire component tests, RefreshDatabase, and all Pest 4 features. Do not use for factories, seeders, migrations, controllers, models, or non-test PHP code."
+description: "Use this skill for Pest PHP testing in Laravel projects only. Trigger whenever any test is being written, edited, fixed, or refactored — including fixing tests that broke after a code change, adding assertions, converting PHPUnit to Pest, adding datasets, and TDD workflows. Always activate when the user asks how to write something in Pest, mentions test files or directories (tests/Feature, tests/Unit, tests/v4/Browser), or needs browser testing, smoke testing multiple pages for JS errors, or architecture tests. Covers: test()/it()/expect() syntax, datasets, mocking, browser testing (visit/click/fill), smoke testing, arch(), Livewire component tests, RefreshDatabase, and all Pest 4 features. Do not use for factories, seeders, migrations, controllers, models, or non-test PHP code."
 license: MIT
 metadata:
   author: laravel
@@ -27,7 +27,7 @@ The `{name}` argument should include only the path and test name, but should not
 ### Test Organization
 
 - Unit/Feature tests: `tests/Feature` and `tests/Unit` directories.
-- Browser tests: `tests/Browser/` directory.
+- Browser tests: `tests/v4/Browser/` (the legacy `tests/Browser/` Dusk suite is not a reference).
 - Do NOT remove tests without approval - these are core application code.
 
 ### Basic Test Structure
@@ -43,13 +43,15 @@ it('is true', function () {
 
 ### Running Tests
 
+These commands require a PHP runtime, Composer dependencies, and the application's test environment. If those are unavailable, inspect the test source and report runtime verification as unavailable rather than claiming the command ran.
+
 - Run minimal tests with filter before finalizing: `php artisan test --compact --filter=testName`.
 - Run all tests: `php artisan test --compact`.
 - Run file: `php artisan test --compact tests/Feature/ExampleTest.php`.
 
 ## Assertions
 
-Use specific assertions (`assertSuccessful()`, `assertNotFound()`) instead of `assertStatus()`:
+Use semantic assertions when they express the contract (`assertSuccessful()`, `assertNotFound()`, `assertForbidden()`). Use `assertStatus()` when the exact status code is part of the contract:
 
 <!-- Pest Response Assertion -->
 ```php
@@ -58,7 +60,7 @@ it('returns all', function () {
 });
 ```
 
-| Use | Instead of |
+| Use | Instead of when only the status class matters |
 |-----|------------|
 | `assertSuccessful()` | `assertStatus(200)` |
 | `assertNotFound()` | `assertStatus(404)` |
@@ -96,7 +98,7 @@ it('has emails', function (string $email) {
 
 Browser tests run in real browsers for full integration testing:
 
-- Browser tests live in `tests/Browser/`.
+- Browser tests live in `tests/v4/Browser/` (the legacy `tests/Browser/` Dusk suite is not a reference).
 - Use Laravel features like `Event::fake()`, `assertAuthenticated()`, and model factories.
 - Use `RefreshDatabase` for clean state per test.
 - Interact with page: click, type, scroll, select, submit, drag-and-drop, touch gestures.
@@ -159,7 +161,7 @@ arch('controllers')
 ## Common Pitfalls
 
 - Not importing `use function Pest\Laravel\mock;` before using mock
-- Using `assertStatus(200)` instead of `assertSuccessful()`
+- Using `assertStatus(200)` when only success matters; use `assertSuccessful()` instead
 - Forgetting datasets for repetitive validation tests
 - Deleting tests without approval
 - Forgetting `assertNoJavaScriptErrors()` in browser tests

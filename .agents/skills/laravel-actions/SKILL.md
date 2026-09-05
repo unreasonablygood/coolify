@@ -20,7 +20,7 @@ Use this skill to implement or update actions based on `lorisleiva/laravel-actio
    - `asListener` (+ event listener wiring)
    - `asCommand` (+ command signature/description)
 5. Add or update tests for the chosen entrypoint.
-6. When tests need isolation, use action fakes (`MyAction::fake()`) and assertions (`MyAction::assertDispatched()`).
+6. When tests need isolation, use `AsFake` helpers such as `shouldRun()`/`shouldNotRun()` and verify interactions with Mockery expectations; this package does not provide `fake()` or `assertDispatched()`.
 
 ## Base Action Pattern
 
