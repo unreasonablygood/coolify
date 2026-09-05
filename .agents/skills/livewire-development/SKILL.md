@@ -78,16 +78,18 @@ You can listen for `livewire:init` to hook into Livewire initialization:
 ```js
 document.addEventListener('livewire:init', function () {
     Livewire.hook('request', ({ fail }) => {
-        if (fail && fail.status === 419) {
-            alert('Your session expired');
-        }
-    });
-
-    Livewire.hook('message.failed', (message, component) => {
-        console.error(message);
+        fail(({ status, content, preventDefault }) => {
+            if (status === 419) {
+                preventDefault();
+                console.error('Livewire request failed', { status, content });
+                alert('Your session expired');
+            }
+        });
     });
 });
 ```
+
+For this application, the production request-failure behavior lives in `resources/js/livewire-request-failure.js`; reuse that handler rather than adding a second failure path.
 
 ## Testing
 
@@ -98,7 +100,7 @@ Livewire::test(Counter::class)
     ->call('increment')
     ->assertSet('count', 1)
     ->assertSee(1)
-    ->assertStatus(200);
+    ->assertSuccessful();
 ```
 
 <!-- Testing Livewire Component Exists on Page -->

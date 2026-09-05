@@ -1,10 +1,16 @@
 # Validation & Forms Best Practices
 
-## Use Form Request Classes
+Prefer Form Request classes for new controller validation when no local convention exists. First follow the endpoint's established convention. This fork intentionally uses inline `$request->validate(...)` and `Validator::make(...)` in API and Livewire paths; keep those patterns unless the task changes that contract.
 
-Extract validation from controllers into dedicated Form Request classes.
+When a new controller area already uses Form Requests, type-hint the request and pass only validated data:
+```php
+public function store(StorePostRequest $request)
+{
+    Post::create($request->validated());
+}
+```
 
-Incorrect:
+When an existing endpoint uses inline validation, preserve it instead of refactoring solely for style:
 ```php
 public function store(Request $request)
 {
@@ -15,13 +21,7 @@ public function store(Request $request)
 }
 ```
 
-Correct:
-```php
-public function store(StorePostRequest $request)
-{
-    Post::create($request->validated());
-}
-```
+The project's API controllers and Livewire actions are documented in `AGENTS.md`; check sibling code before choosing between these valid approaches.
 
 ## Array vs. String Notation for Rules
 

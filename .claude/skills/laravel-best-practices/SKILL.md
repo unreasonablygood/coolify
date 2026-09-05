@@ -71,7 +71,7 @@ Check sibling files, related controllers, models, or tests for established patte
 
 ### 6. Validation & Forms → `rules/validation.md`
 
-- Form Request classes, not inline validation
+- Form Request classes for new controller validation when no local convention exists; preserve established inline validation
 - Array notation `['required', 'email']` for new code; follow existing convention
 - `$request->validated()` only — never `$request->all()`
 - `Rule::when()` for conditional validation
@@ -105,7 +105,7 @@ Check sibling files, related controllers, models, or tests for established patte
 - Scoped bindings for nested resources
 - `Route::resource()` or `apiResource()`
 - Methods under 10 lines — extract to actions/services
-- Type-hint Form Requests for auto-validation
+- Type-hint Form Requests when that is the established convention; do not refactor this fork's inline API or Livewire validation solely for style
 
 ### 11. HTTP Client → `rules/http-client.md`
 
